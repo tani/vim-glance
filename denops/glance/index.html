@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+  <head>
+    <script type="module">
+      const ws = new WebSocket(`ws://${location.host}`)
+      const doc = document.getElementById('viewer').contentWindow.document
+
+      async function update(payload) {
+        // update html
+        const root = doc.getElementById('root')
+        if (root.innerHTML !== payload.document) {
+          root.innerHTML = payload.document
+        }
+        // update curosr position
+        let line = payload.line
+        let element = doc.querySelector(`[data-source-line="${line}"]`)
+        while (line > 1 && !element) {
+         line--
+         element = doc.querySelector(`[data-source-line="${line}"]`)
+        }
+        element?.scrollIntoView()
+     }
+
+     ws.addEventListener('message', event => {
+       const {type, payload} = JSON.parse(event.data)
+       switch(type) {
+         case 'update':
+           update(payload)
+           break
+       }
+     })
+
+     window.addEventListener('unload', () => {
+       ws.close()
+     })
+    </script>
+    <style>
+      html, body, #viewer {
+        border: none;
+        margin: 0; padding: 0;
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <iframe id="viewer" srcdoc="<div id='root'></div>" />
+  </body>
+</html>
