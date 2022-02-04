@@ -18,15 +18,30 @@ async function update(denops: Denops, renderer: MarkdownRenderer) {
   });
 }
 
+const defaultPreamble = `
+<style>
+*, *::before, *::after {
+  box-sizing: border-box;
+  line-height: calc(1em + 0.5rem)
+  font-family: system-ui;
+}
+#root {
+  margin: 50px auto;
+  width: min(700px, 90%);
+}
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+</style>
+`;
+
 export async function main(denops: Denops) {
   const port = await vars.g.get<number>(denops, "glance#port") ?? 8080;
   const plugins = await vars.g.get<string[]>(denops, "glance#plugins");
   const html = await vars.g.get<boolean>(denops, "glance#html");
   const breaks = await vars.g.get<boolean>(denops, "glance#breaks");
   const linkify = await vars.g.get<boolean>(denops, "glance#linkify");
-  const stylePath = new URL("./style.css", import.meta.url);
-  const stylesheet = await Deno.readTextFile(stylePath);
-  const defaultPreamble = `<style>${stylesheet}</style>`;
   const preamble = await vars.g.get<string>(denops, "glance#preamble");
   const renderer = new MarkdownRenderer();
   await renderer.initialize({
