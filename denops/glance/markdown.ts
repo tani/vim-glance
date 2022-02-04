@@ -1,10 +1,21 @@
 import MarkdownIt from "https://esm.sh/markdown-it";
 
+interface Options {
+  html: boolean;
+  linkify: boolean;
+  breaks: boolean;
+  plugins: string[];
+  preamble: string;
+}
+
 export class MarkdownRenderer {
-  #markdownIt = new MarkdownIt();
+  #markdownIt: MarkdownIt | undefined;
   #preamble = "";
-  async initialize(options: { plugins: string[]; preamble: string }) {
+  async initialize(options: Options) {
     this.#preamble = options.preamble;
+    let markdownIt = new MarkdownIt({
+      options,
+    });
     const plugins = [
       "https://esm.sh/markdown-it-source-map",
       ...options.plugins,
@@ -13,8 +24,9 @@ export class MarkdownRenderer {
       plugins.map(async (plugin) => await import(plugin)),
     );
     for (const module of modules) {
-      this.#markdownIt = this.#markdownIt.use(module.default);
+      markdownIt = markdownIt.use(module.default);
     }
+    this.#markdownIt = markdownIt;
   }
   async render(content: string) {
     return await Promise.resolve(

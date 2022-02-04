@@ -40,8 +40,11 @@ Plug 'tani/glance-vim'
 Please hit the command `:Glance` in Vim and open `http://localhost:8765/index.html` in the browser.
 
 - `g:glance#plugins` is a list of URLs for the markdown-it plugins.
-- `g:glance#port` is a port number to serve the previewer
+- `g:glance#port` is a port number to serve the previewer.
 - `g:glance#preamble` is a string, which will be appended at the head of HTML output.
+- `g:glance#html` is a boolean value to be enable HTML tags in markdown.
+- `g:glance#linkify` is a boolean vlaue to render URLs as `a` elments .
+- `g:glance#breaks` is a boolean vlaue to convert newlines into `br` elements.
 
 ## Related Plugins
 

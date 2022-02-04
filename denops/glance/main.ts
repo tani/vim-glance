@@ -21,12 +21,18 @@ async function update(denops: Denops, renderer: MarkdownRenderer) {
 export async function main(denops: Denops) {
   const port = await vars.g.get<number>(denops, "glance#port") ?? 8080;
   const plugins = await vars.g.get<string[]>(denops, "glance#plugins");
+  const html = await vars.g.get<boolean>(denops, "glance#html");
+  const breaks = await vars.g.get<boolean>(denops, "glance#breaks");
+  const linkify = await vars.g.get<boolean>(denops, "glance#linkify");
   const stylePath = new URL("./style.css", import.meta.url);
   const stylesheet = await Deno.readTextFile(stylePath);
   const defaultPreamble = `<style>${stylesheet}</style>`;
   const preamble = await vars.g.get<string>(denops, "glance#preamble");
   const renderer = new MarkdownRenderer();
   await renderer.initialize({
+    html: html ?? false,
+    breaks: breaks ?? false,
+    linkify: linkify ?? false,
     plugins: plugins ?? [],
     preamble: preamble ?? defaultPreamble,
   });
