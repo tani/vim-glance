@@ -1,0 +1,94 @@
+glance.txt
+
+================================================================================
+CONTENTS                                                         *glance-contents*
+
+1. Glance Vim..................................................|glance-glance_vim|
+    1.1. Installation........................................|glance-installation|
+    1.2. Usage......................................................|glance-usage|
+    1.3. Advanced Usage....................................|glance-advanced_usage|
+    1.4. Related Plugins..................................|glance-related_plugins|
+    1.5. Copyright and License......................|glance-copyright_and_license|
+
+================================================================================
+GLANCE VIM                                                     *glance-glance_vim*
+
+Do you know the number of Markdown flavours in the world?
+Everyone has an own flavour.
+It's hard to find the suitable Markdown previewer for your own flavored Markdown.
+
+Glance Vim is YOUR previewer. You do not to wander anymore.
+Because this plugin provides a mechanism to customize renderer using markdown-it plugins.
+
+If you want to use emoji in the markdown, then you just need to append `markdown-it-emoji` to `g:glance#plugins`
+>
+    let g:glance#plugins = ['https://esm.sh/markdown-it-emoji']
+<
+
+The renderer dynamically loads your plugin with dynamic import in Deno,
+then it renders the buffer content with markdown-it,
+and finally it sends the HTML document to the browwser.
+
+Of couse, Glance Vim also provide features as follows.
+
+*   Spy the cursor motion in Vim.
+*   Append custom preamble in a head of HTML output.
+*   Synchronize content between the buffer and the browser.
+*   Offline mode, Deno caches the markdown-it plugins.
+
+Let's write document in your own flavoured Markdown.
+
+--------------------------------------------------------------------------------
+INSTALLATION                                                 *glance-installation*
+
+This plugin requires denops.vim and Deno.
+>
+    Plug 'vim-denops/denops.vim'
+    Plug 'tani/glance-vim'
+<
+
+--------------------------------------------------------------------------------
+USAGE                                                               *glance-usage*
+
+Please hit the command `:Glance` in Vim and open `http://localhost:8765/index.html` in the browser.
+
+*   `g:glance#server_port (8765)` is a port number to serve the previewer.
+*   `g:glance#markdown_plugins ([])` is a list of URLs for the markdown-it plugins.
+*   `g:glance#markdown_html (v:false)` is a boolean value to be enable HTML tags in markdown.
+*   `g:glance#markdown_linkify (v:false)` is a boolean vlaue to render URLs as `a` elments .
+*   `g:glance#markdown_breaks (v:false)` is a boolean vlaue to convert newlines into `br` elements.
+*   `g:glance#html_preamble ('')` is a string, which will be appended at the head of HTML output.
+
+--------------------------------------------------------------------------------
+ADVANCED USAGE                                             *glance-advanced_usage*
+
+Glance Vim has an interface to extend the MarkdownIt renderer in TypeScript.
+
+Step1: Set path of configuration file `g:glance#config` such as `~/.config/glance/init.ts`
+>
+    let g:glance#config = extend('~/.config/glance/init.ts')
+<
+
+Step2: Write a configuration in TypeScript.
+>
+    // ~/.config/glance/init.ts
+    import markdownItEmoji from 'https://esm.sh/markdown-it-emoji'
+    import MarkdownIt from 'https://esm.sh/markdown-it'
+    export function createMarkdownRenderer(md: MarkdownIt): MarkdownIt {
+      return md.use(markdownItEmoji);
+    }
+<
+
+--------------------------------------------------------------------------------
+RELATED PLUGINS                                           *glance-related_plugins*
+
+*   previm (https://github.com/previm/previm)
+*   bufpreview.vim (https://github.com/kat0h/bufpreview.vim)
+*   markdown-preview.nvim (https://github.com/iamcco/markdown-preview.nvim)
+
+--------------------------------------------------------------------------------
+COPYRIGHT AND LICENSE                               *glance-copyright_and_license*
+
+Copyrihgt (c) 2022 TANIGUCHI Masaya. All rights reserved.
+This plugin is released under MIT License (http://git.io/mit-license)
+
