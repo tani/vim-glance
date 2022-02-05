@@ -34,8 +34,7 @@ export async function main(denops: Denops) {
   const preamble = (await vars.g.get(denops, "glance#html_preamble", style))!;
   const defaultConfigPath = new URL("./config.ts", import.meta.url).toString();
   const configPath = (await vars.g.get<string>(denops, "glance#config", defaultConfigPath))!;
-  const config = await import(configPath);
-  const createMarkdownRenderer = config.createMarkdownRenderer;
+  const { createMarkdownRenderer } = await import(configPath);
   const renderer = new MarkdownRenderer();
   await renderer.initialize({ html, breaks, linkify, plugins, preamble, createMarkdownRenderer });
 
