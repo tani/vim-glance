@@ -6,6 +6,7 @@ interface Options {
   breaks: boolean;
   plugins: string[];
   preamble: string;
+  createMarkdownRenderer: (md: MarkdownIt) => MarkdownIt;
 }
 
 export class MarkdownRenderer {
@@ -26,7 +27,7 @@ export class MarkdownRenderer {
     for (const module of modules) {
       markdownIt = markdownIt.use(module.default);
     }
-    this.#markdownIt = markdownIt;
+    this.#markdownIt = options.createMarkdownRenderer(markdownIt);
   }
   async render(content: string) {
     return await Promise.resolve(

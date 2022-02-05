@@ -18,7 +18,7 @@ async function update(denops: Denops, renderer: MarkdownRenderer) {
   });
 }
 
-const defaultPreamble = `
+const style = `
 <style>
 *, *::before, *::after {
   box-sizing: border-box;
@@ -32,25 +32,23 @@ const defaultPreamble = `
 img, picture, video, canvas, svg {
   display: block;
   max-width: 100%;
-}
-</style>
+} </style>
 `;
 
 export async function main(denops: Denops) {
-  const port = await vars.g.get<number>(denops, "glance#port") ?? 8080;
-  const plugins = await vars.g.get<string[]>(denops, "glance#plugins");
-  const html = await vars.g.get<boolean>(denops, "glance#html");
-  const breaks = await vars.g.get<boolean>(denops, "glance#breaks");
-  const linkify = await vars.g.get<boolean>(denops, "glance#linkify");
-  const preamble = await vars.g.get<string>(denops, "glance#preamble");
+  const port = (await vars.g.get(denops, "glance#server_port", 8765))!;
+  const plugins = (await vars.g.get(denops, "glance#markdown_plugins", []))!;
+  const html = (await vars.g.get(denops, "glance#markdown_html", false))!;
+  const breaks = (await vars.g.get(denops, "glance#markdown_breaks", false))!;
+  const linkify = (await vars.g.get(denops, "glance#markdown_linkify", false))!;
+  const preamble = (await vars.g.get(denops, "glance#html_preamble", style))!;
+  const configPath = await vars.g.get<string>(denops, "glance#config");
+  let createMarkdownRenderer = (md: unknown) => md;
+  if (configPath) {
+    createMarkdownRenderer = (await import(configPath)).createMarkdownRenderer;
+  }
   const renderer = new MarkdownRenderer();
-  await renderer.initialize({
-    html: html ?? false,
-    breaks: breaks ?? false,
-    linkify: linkify ?? false,
-    plugins: plugins ?? [],
-    preamble: preamble ?? defaultPreamble,
-  });
+  await renderer.initialize({ html, breaks, linkify, plugins, preamble, createMarkdownRenderer });
   denops.dispatcher = {
     update() {
       update(denops, renderer);
@@ -67,7 +65,7 @@ export async function main(denops: Denops) {
     },
   };
   const script = `
-    function s:setup_glance()
+    function s:glance()
       call denops#notify('${denops.name}', 'listen', [])
       augroup GranceBuffer
         autocmd!
@@ -75,15 +73,7 @@ export async function main(denops: Denops) {
         autocmd BufUnload <buffer> call denops#notify('${denops.name}', 'close', [])
       augroup END
     endfunction
-
-    augroup GranceGlobal
-      autocmd!
-      autocmd FileType markdown call s:setup_grance()
-    augroup END
-
-    if &filetype == 'markdown'
-      call s:setup_glance()
-    endif
+    command! Glance call s:glance()
   `;
   execute(denops, script);
 }

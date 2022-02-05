@@ -39,12 +39,34 @@ Plug 'tani/glance-vim'
 
 Please hit the command `:Glance` in Vim and open `http://localhost:8765/index.html` in the browser.
 
-- `g:glance#plugins` is a list of URLs for the markdown-it plugins.
-- `g:glance#port` is a port number to serve the previewer.
-- `g:glance#preamble` is a string, which will be appended at the head of HTML output.
-- `g:glance#html` is a boolean value to be enable HTML tags in markdown.
-- `g:glance#linkify` is a boolean vlaue to render URLs as `a` elments .
-- `g:glance#breaks` is a boolean vlaue to convert newlines into `br` elements.
+- `g:glance#server_port (8765)` is a port number to serve the previewer.
+- `g:glance#markdown_plugins ([])` is a list of URLs for the markdown-it plugins.
+- `g:glance#markdown_html (v:false)` is a boolean value to be enable HTML tags in markdown.
+- `g:glance#markdown_linkify (v:false)` is a boolean vlaue to render URLs as `a` elments .
+- `g:glance#markdown_breaks (v:false)` is a boolean vlaue to convert newlines into `br` elements.
+- `g:glance#html_preamble ('')` is a string, which will be appended at the head of HTML output.
+
+## Advanced Usage
+
+Glance Vim has an interface to extend the MarkdownIt renderer in TypeScript.
+
+Step1: Set path of configuration file `g:glance#config` such as `~/.config/glance/init.ts`
+
+``` vim
+let g:glance#config = extend('~/.config/glance/init.ts')
+```
+
+Step2: Write a configuration in TypeScript.
+
+```typescript
+// ~/.config/glance/init.ts
+import markdownItEmoji from 'https://esm.sh/markdown-it-emoji'
+import MarkdownIt from 'https://esm.sh/markdown-it'
+
+export function createMarkdownRenderer(md: MarkdownIt): MarkdownIt {
+  return md.use(markdownItEmoji);
+}
+```
 
 ## Related Plugins
 
