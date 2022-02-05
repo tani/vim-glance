@@ -13,6 +13,8 @@ CONTENTS                                                         *glance-content
 ================================================================================
 GLANCE VIM                                                     *glance-glance_vim*
 
+
+
 Do you know the number of Markdown flavours in the world?
 Everyone has an own flavour.
 It's hard to find the suitable Markdown previewer for your own flavored Markdown.
@@ -50,14 +52,14 @@ This plugin requires denops.vim and Deno.
 --------------------------------------------------------------------------------
 USAGE                                                               *glance-usage*
 
-Please hit the command `:Glance` in Vim and open `http://localhost:8765/index.html` in the browser.
+Please hit the command `:Glance` in Vim and open `http://localhost:8765` in the browser.
 
 *   `g:glance#server_port (8765)` is a port number to serve the previewer.
 *   `g:glance#markdown_plugins ([])` is a list of URLs for the markdown-it plugins.
 *   `g:glance#markdown_html (v:false)` is a boolean value to be enable HTML tags in markdown.
 *   `g:glance#markdown_linkify (v:false)` is a boolean vlaue to render URLs as `a` elments .
 *   `g:glance#markdown_breaks (v:false)` is a boolean vlaue to convert newlines into `br` elements.
-*   `g:glance#html_preamble ('')` is a string, which will be appended at the head of HTML output.
+*   `g:glance#stylesheet ('')` is a string, which will be appended  as a CSS stylesheet..
 
 --------------------------------------------------------------------------------
 ADVANCED USAGE                                             *glance-advanced_usage*
