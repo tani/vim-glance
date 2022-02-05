@@ -1,4 +1,4 @@
-import MarkdownIt from "https://esm.sh/markdown-it";
+import MarkdownIt from "https://esm.sh/markdown-it@12";
 
 interface Options {
   html: boolean;

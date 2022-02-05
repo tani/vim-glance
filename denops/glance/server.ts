@@ -1,5 +1,5 @@
 import { App, createApp } from "https://lib.deno.dev/x/servest@v1/mod.ts";
-import { lookup } from "https://esm.sh/mime-types";
+import { lookup } from "https://esm.sh/mime-types@2";
 
 interface Options {
   onOpen: () => void;
