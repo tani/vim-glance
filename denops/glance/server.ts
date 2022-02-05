@@ -15,6 +15,10 @@ export class Server {
     const app = createApp();
 
     app.get("/", async (req) => {
+      req.redirect("/html");
+    });
+
+    app.get("/html", async (req) => {
       const status = 200;
       const headers = new Headers({ "Content-Type": "text/html" });
       const url = new URL("./index.html", import.meta.url);
