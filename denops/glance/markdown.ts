@@ -5,21 +5,18 @@ interface Options {
   linkify: boolean;
   breaks: boolean;
   plugins: string[];
-  preamble: string;
   createMarkdownRenderer: (md: MarkdownIt) => MarkdownIt;
 }
 
 export class MarkdownRenderer {
   #markdownIt: MarkdownIt | undefined;
-  #preamble = "";
   async initialize(options: Options) {
-    this.#preamble = options.preamble;
     let markdownIt = new MarkdownIt({
       options,
     });
     const plugins = [
-      "https://esm.sh/markdown-it-source-map",
       ...options.plugins,
+      "https://esm.sh/markdown-it-source-map",
     ];
     const modules = await Promise.all(
       plugins.map(async (plugin) => await import(plugin)),
@@ -29,9 +26,7 @@ export class MarkdownRenderer {
     }
     this.#markdownIt = options.createMarkdownRenderer(markdownIt);
   }
-  async render(content: string) {
-    return await Promise.resolve(
-      this.#preamble + this.#markdownIt.render(content),
-    );
+  render(content: string) {
+    return Promise.resolve(this.#markdownIt.render(content));
   }
 }

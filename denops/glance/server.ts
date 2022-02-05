@@ -3,6 +3,8 @@ import { lookup } from "https://esm.sh/mime-types";
 
 interface Options {
   onOpen: () => void;
+  readFile: (path: string) => Promise<Uint8Array>;
+  stylesheet: string;
 }
 
 export class Server {
@@ -12,18 +14,32 @@ export class Server {
   constructor(options: Options) {
     const app = createApp();
 
-    app.ws("/", (req) => {
+    app.get("/", async (req) => {
+      const status = 200;
+      const headers = new Headers({ "Content-Type": "text/html" });
+      const url = new URL("./index.html", import.meta.url);
+      const body = await Deno.readTextFile(url);
+      await req.respond({ status, headers, body });
+    });
+
+    app.ws("/ws", (req) => {
       const socket: WebSocket = req as any;
       this.#sockets.push(socket);
       setTimeout(options.onOpen, 1000);
     });
 
-    app.get(/^\/(.*)/, async (req) => {
+    app.get("/css", async (req) => {
+      const status = 200;
+      const headers = new Headers({ "Content-Type": "text/css" });
+      const body = options.stylesheet;
+      await req.respond({ status, headers, body });
+    });
+
+    app.get(/^\/(.+)/, async (req) => {
       const status = 200;
       const contentType = lookup(req.match[1]) || "text/plain";
       const headers = new Headers({ "Content-Type": contentType });
-      const url = new URL(`./${req.match[1]}`, import.meta.url);
-      const body = await Deno.readTextFile(url);
+      const body = await options.readFile(req.match[1]);
       await req.respond({ status, headers, body });
     });
 

@@ -3,7 +3,7 @@
   <head>
     <link rel="icon" href="data:,">
     <script type="module">
-      const ws = new WebSocket(`ws://${location.host}`)
+      const ws = new WebSocket(`ws://${location.host}/ws`)
       const doc = document.getElementById('viewer').contentWindow.document
 
       async function update(payload) {
@@ -45,6 +45,6 @@
     </style>
   </head>
   <body>
-    <iframe id="viewer" srcdoc="<div id='root'></div>" />
+    <iframe id="viewer" srcdoc="<link href='/css' rel='stylesheet'><div id='root'></div>" />
   </body>
 </html>
