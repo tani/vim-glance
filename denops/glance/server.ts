@@ -3,7 +3,7 @@ import { lookup } from "https://esm.sh/mime-types@2";
 
 interface Options {
   onOpen: () => void;
-  readFile: (path: string) => Promise<Uint8Array>;
+  readFile: (path: string) => Promise<Uint8Array | null>;
   stylesheet: string;
 }
 
@@ -47,16 +47,11 @@ export class Server {
       await req.respond({ status, headers, body });
     });
 
-    app.get("/favicon.ico", async (req) => {
-      const status = 404;
-      await req.respond({ status });
-    });
-
     app.get(/^\/(.+)/, async (req) => {
-      const status = 200;
       const contentType = lookup(req.match[1]) || "text/plain";
       const headers = new Headers({ "Content-Type": contentType });
       const body = await options.readFile(req.match[1]);
+      const status = body === null ? 404 :200;
       await req.respond({ status, headers, body });
     });
 

@@ -7,9 +7,16 @@ import { Server } from "./server.ts";
 import { MarkdownRenderer } from "./markdown.ts";
 
 export async function main(denops: Denops) {
-  async function readFile(path: string) {
+  async function readFile(path: string): Promise<Uint8Array | null> {
     const dir = await fn.expand(denops, "%:p:h") as string;
-    return Deno.readFile(join(dir, path));
+    try {
+      return await Deno.readFile(join(dir, path));
+    } catch (error: unknown) {
+      if (error instanceof Deno.errors.NotFound) {
+        return null;
+      }
+      throw error;
+    }
   }
 
   async function update() {
