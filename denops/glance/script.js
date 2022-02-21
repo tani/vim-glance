@@ -1,11 +1,11 @@
 const ws = new WebSocket(`ws://${location.host}/ws`);
-const win = document.getElementById("viewer").contentWindow;
-const doc = win.document;
 
 async function update(payload) {
+  const doc = document.getElementById("viewer").contentWindow.document;
   // update html
   const root = doc.getElementById("root");
-  if (root.innerHTML !== payload.document) {
+  console.log(root, payload);
+  if (root && root.innerHTML !== payload.document) {
     root.innerHTML = payload.document;
   }
   // update curosr position
