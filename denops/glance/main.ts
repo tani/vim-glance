@@ -47,17 +47,4 @@ export async function main(denops: Denops) {
       return Promise.resolve();
     },
   };
-  const script = `
-    function s:glance()
-      call denops#notify('${denops.name}', 'listen', [])
-      augroup Grance
-        autocmd!
-        autocmd TextChanged,TextChangedI,TextChangedP <buffer> call denops#notify('${denops.name}', 'update', [])
-        autocmd CursorMoved,CursorMovedI <buffer> call denops#notify('${denops.name}', 'update', [])
-        autocmd BufUnload <buffer> call denops#notify('${denops.name}', 'close', [])
-      augroup END
-    endfunction
-    command! Glance call s:glance()
-  `;
-  execute(denops, script);
 }
