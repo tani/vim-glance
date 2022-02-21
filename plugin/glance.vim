@@ -6,16 +6,9 @@ let g:loaded_glance = v:true
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! s:notify(method, args) abort
-  if exists('g:loaded_denops')
-        \ && denops#server#status() ==# 'running'
-        \ && denops#plugin#is_loaded('glance')
-    call denops#notify('glance', a:method, a:args)
-  else
-    execute 'autocmd User DenopsPluginPost:glance ++once'
-          \ printf('call denops#notify("glance", "%s", "%s")',
-          \ a:method, string(a:args))
-  endif
+function! s:notify(method, params) abort
+  call denops#plugin#wait_async('glance',
+        \ function('denops#notify', ['glance', a:method, a:params]))
 endfunction
 
 function! s:glance() abort
