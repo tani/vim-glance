@@ -39,6 +39,19 @@ export class Server {
       await req.respond({ status, headers, body });
     });
 
+    app.get("/js", async (req) => {
+      const status = 200;
+      const headers = new Headers({ "Content-Type": "text/javascript" });
+      const url = new URL("./script.js", import.meta.url);
+      const body = await Deno.readTextFile(url);
+      await req.respond({ status, headers, body });
+    });
+
+    app.get("/favicon.ico", async (req) => {
+      const status = 404;
+      await req.respond({ status });
+    });
+
     app.get(/^\/(.+)/, async (req) => {
       const status = 200;
       const contentType = lookup(req.match[1]) || "text/plain";
