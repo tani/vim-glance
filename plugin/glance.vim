@@ -3,8 +3,8 @@ if exists('g:loaded_glance') || &cp
 endif
 let g:loaded_glance = v:true
 
-let s:save_cpo = &cpo
-set cpo&vim
+let s:save_cpoptions = &cpoptions
+set cpoptions&vim
 
 function! s:notify(method, params) abort
   call denops#plugin#wait_async('glance',
@@ -23,5 +23,5 @@ endfunction
 
 command! Glance call s:glance()
 
-let &cpo = s:save_cpo
-unlet s:save_cpo
+let &cpo = s:save_cpoptions
+unlet s:save_cpoptions
