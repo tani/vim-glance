@@ -1,4 +1,4 @@
-if exists('g:loaded_glance') || &cp
+if exists('g:loaded_glance') || &compatible
   finish
 endif
 let g:loaded_glance = v:true
@@ -23,5 +23,5 @@ endfunction
 
 command! Glance call s:glance()
 
-let &cpo = s:save_cpoptions
+let &cpoptions = s:save_cpoptions
 unlet s:save_cpoptions
