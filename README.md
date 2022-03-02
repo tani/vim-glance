@@ -54,7 +54,7 @@ Glance Vim has an interface to extend the MarkdownIt renderer in TypeScript.
 Step1: Set path of configuration file `g:glance#config` such as `~/.config/glance/init.ts`
 
 ``` vim
-let g:glance#config = extend('~/.config/glance/init.ts')
+let g:glance#config = expand('~/.config/glance/init.ts')
 ```
 
 Step2: Write a configuration in TypeScript.
