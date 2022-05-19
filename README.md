@@ -45,7 +45,7 @@ Please hit the command `:Glance` in Vim and open `http://localhost:8765` in the 
 - `g:glance#markdown_html (v:false)` is a boolean value to be enable HTML tags in markdown.
 - `g:glance#markdown_linkify (v:false)` is a boolean vlaue to render URLs as `a` elments .
 - `g:glance#markdown_breaks (v:false)` is a boolean vlaue to convert newlines into `br` elements.
-- `g:glance#stylesheet ('')` is a string, which will be appended  as a CSS stylesheet..
+- `g:glance#stylesheet ('')` is a string which will be appended to the default CSS, or path/URL to a CSS file.
 
 ## Advanced Usage
 

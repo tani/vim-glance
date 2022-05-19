@@ -35,7 +35,23 @@ export class Server {
     app.get("/css", async (req) => {
       const status = 200;
       const headers = new Headers({ "Content-Type": "text/css" });
-      const body = options.stylesheet;
+
+      const isFile = options.stylesheet.match(/.css$/);
+      const isRemote = options.stylesheet.match(new RegExp("^https?://"));
+
+      let body: string;
+
+      if (isRemote) {
+        const res = await fetch(options.stylesheet);
+        body = await res.text();
+      }
+      else if (isFile) {
+        body = await Deno.readTextFile(options.stylesheet);
+      }
+      else {
+        body = options.stylesheet;
+      }
+
       await req.respond({ status, headers, body });
     });
 
