@@ -51,7 +51,7 @@ export class Server {
       const contentType = lookup(req.match[1]) || "text/plain";
       const headers = new Headers({ "Content-Type": contentType });
       const body = await options.readFile(req.match[1]);
-      const status = body === null ? 404 :200;
+      const status = body === null ? 404 : 200;
       await req.respond({ status, headers, body });
     });
 
