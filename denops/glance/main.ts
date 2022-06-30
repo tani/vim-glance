@@ -11,9 +11,7 @@ type Options = {
   html: boolean;
   breaks: boolean;
   linkify: boolean;
-  defaultStylesheet: string;
   stylesheet: string;
-  defaultConfigPath: string;
   configPath: string;
 };
 
@@ -46,7 +44,7 @@ export async function main(denops: Denops) {
 
   async function ensureOptions() {
     if (options) return options;
-    const defaultStylesheet = `#root {margin: 50px auto; width: min(700px, 90%);}`;
+    const defaultStylesheet = "#root {margin: 50px auto; width: min(700px, 90%);}";
     const defaultConfigPath = new URL("./config.ts", import.meta.url).toString();
     options = {
       port: await g.get(denops, "glance#server_port", 8765),
@@ -54,9 +52,7 @@ export async function main(denops: Denops) {
       html: await g.get(denops, "glance#markdown_html", false),
       breaks: await g.get(denops, "glance#markdown_breaks", false),
       linkify: await g.get(denops, "glance#markdown_linkify", false),
-      defaultStylesheet,
       stylesheet: await g.get(denops, "glance#stylesheet", defaultStylesheet),
-      defaultConfigPath,
       configPath: await g.get(denops, "glance#config", defaultConfigPath),
     };
     return options;
@@ -88,7 +84,6 @@ export async function main(denops: Denops) {
       options = await ensureOptions();
       server = await ensureServer();
       server.listen({ port: options.port });
-      return Promise.resolve();
     },
     close() {
       server?.close();
