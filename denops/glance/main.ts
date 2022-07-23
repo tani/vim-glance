@@ -1,6 +1,7 @@
 import { Denops } from "https://lib.deno.dev/x/denops_std@v3/mod.ts";
 import { g } from "https://lib.deno.dev/x/denops_std@v3/variable/mod.ts";
 import * as fn from "https://lib.deno.dev/x/denops_std@v3/function/mod.ts";
+import * as batch from "https://lib.deno.dev/x/denops_std@v3/batch/mod.ts";
 import { join } from "https://lib.deno.dev/std/path/mod.ts";
 import { Server } from "./server.ts";
 import { MarkdownRenderer } from "./markdown.ts";
@@ -35,10 +36,12 @@ export async function main(denops: Denops) {
   async function update() {
     renderer = await ensureRenderer();
     server = await ensureServer();
-    const lines = await fn.getline(denops, 1, "$");
+    const [lines, pos] = await batch.gather(denops, async (denops) => {
+      await fn.getline(denops, 1, "$");
+      await fn.getpos(denops, ".");
+    }) as [string[], fn.Position];
     const content = lines.join("\n");
     const document = await renderer.render(content);
-    const pos = await fn.getpos(denops, ".");
     server.send("update", { document, line: pos[1] });
   }
 
@@ -46,14 +49,39 @@ export async function main(denops: Denops) {
     if (options) return options;
     const defaultStylesheet = "#root {margin: 50px auto; width: min(700px, 90%);}";
     const defaultConfigPath = new URL("./config.ts", import.meta.url).toString();
+    const [
+      port,
+      plugins,
+      html,
+      breaks,
+      linkify,
+      stylesheet,
+      configPath,
+    ] = await batch.gather(denops, async (denops) => {
+      await g.get(denops, "glance#server_port", 8765);
+      await g.get(denops, "glance#markdown_plugins", []);
+      await g.get(denops, "glance#markdown_html", false);
+      await g.get(denops, "glance#markdown_breaks", false);
+      await g.get(denops, "glance#markdown_linkify", false);
+      await g.get(denops, "glance#stylesheet", defaultStylesheet);
+      await g.get(denops, "glance#config", defaultConfigPath);
+    }) as [
+      number,
+      string[],
+      boolean,
+      boolean,
+      boolean,
+      string,
+      string,
+    ];
     options = {
-      port: await g.get(denops, "glance#server_port", 8765),
-      plugins: await g.get(denops, "glance#markdown_plugins", []),
-      html: await g.get(denops, "glance#markdown_html", false),
-      breaks: await g.get(denops, "glance#markdown_breaks", false),
-      linkify: await g.get(denops, "glance#markdown_linkify", false),
-      stylesheet: await g.get(denops, "glance#stylesheet", defaultStylesheet),
-      configPath: await g.get(denops, "glance#config", defaultConfigPath),
+      port,
+      plugins,
+      html,
+      breaks,
+      linkify,
+      stylesheet,
+      configPath,
     };
     return options;
   }
