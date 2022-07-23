@@ -131,7 +131,9 @@ export async function main(denops: Denops) {
       const server = await ensureServer();
       server.listen({ hostname: options.hostname, port: options.port });
       if (options.open) {
-        await open(`http://localhost:${options.port}`);
+        await open(`http://localhost:${options.port}`, {
+          background: true,
+        });
       }
     },
     async close() {
