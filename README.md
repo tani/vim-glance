@@ -39,6 +39,7 @@ Plug 'tani/glance-vim'
 
 Please hit the command `:Glance` in Vim and open `http://localhost:8765` in the browser.
 
+- `g:glance#server_hostname (127.0.0.1)` is a hostname to serve the previewer.
 - `g:glance#server_port (8765)` is a port number to serve the previewer.
 - `g:glance#markdown_plugins ([])` is a list of URLs for the markdown-it plugins.
 - `g:glance#markdown_html (v:false)` is a boolean value to be enable HTML tags in markdown.
