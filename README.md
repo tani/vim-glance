@@ -38,6 +38,7 @@ Plug 'tani/glance-vim'
 ## Usage
 
 Please hit the command `:Glance` in Vim and open `http://localhost:8765` in the browser.
+Use `:GlanceStop` to stop glance.
 
 - `g:glance#server_hostname (127.0.0.1)` is a hostname to serve the previewer.
 - `g:glance#server_port (8765)` is a port number to serve the previewer.

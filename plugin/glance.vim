@@ -21,7 +21,15 @@ function! s:glance() abort
   augroup END
 endfunction
 
+function! s:glance_stop() abort
+  call s:notify('close', [])
+  augroup Grance
+    autocmd! * <buffer>
+  augroup END
+endfunction
+
 command! Glance call s:glance()
+command! GlanceStop call s:glance_stop()
 
 let &cpoptions = s:save_cpoptions
 unlet s:save_cpoptions
