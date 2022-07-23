@@ -7,6 +7,7 @@ import { Server } from "./server.ts";
 import { MarkdownRenderer } from "./markdown.ts";
 
 type Options = {
+  hostname: string;
   port: number;
   plugins: string[];
   html: boolean;
@@ -50,6 +51,7 @@ export async function main(denops: Denops) {
     const defaultStylesheet = "#root {margin: 50px auto; width: min(700px, 90%);}";
     const defaultConfigPath = new URL("./config.ts", import.meta.url).toString();
     const [
+      hostname,
       port,
       plugins,
       html,
@@ -58,6 +60,7 @@ export async function main(denops: Denops) {
       stylesheet,
       configPath,
     ] = await batch.gather(denops, async (denops) => {
+      await g.get(denops, "glance#server_hostname", "127.0.0.1");
       await g.get(denops, "glance#server_port", 8765);
       await g.get(denops, "glance#markdown_plugins", []);
       await g.get(denops, "glance#markdown_html", false);
@@ -66,6 +69,7 @@ export async function main(denops: Denops) {
       await g.get(denops, "glance#stylesheet", defaultStylesheet);
       await g.get(denops, "glance#config", defaultConfigPath);
     }) as [
+      string,
       number,
       string[],
       boolean,
@@ -75,6 +79,7 @@ export async function main(denops: Denops) {
       string,
     ];
     options = {
+      hostname,
       port,
       plugins,
       html,
@@ -111,7 +116,7 @@ export async function main(denops: Denops) {
     async listen() {
       options = await ensureOptions();
       server = await ensureServer();
-      server.listen({ port: options.port });
+      server.listen({ hostname: options.hostname, port: options.port });
     },
     close() {
       server?.close();
