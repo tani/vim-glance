@@ -2,6 +2,7 @@ import { Denops } from "https://lib.deno.dev/x/denops_std@v3/mod.ts";
 import { g } from "https://lib.deno.dev/x/denops_std@v3/variable/mod.ts";
 import * as fn from "https://lib.deno.dev/x/denops_std@v3/function/mod.ts";
 import * as batch from "https://lib.deno.dev/x/denops_std@v3/batch/mod.ts";
+import { open } from "https://lib.deno.dev/x/open@v0.0.5/index.ts";
 import { join } from "https://lib.deno.dev/std/path/mod.ts";
 import { Server } from "./server.ts";
 import { MarkdownRenderer } from "./markdown.ts";
@@ -9,6 +10,7 @@ import { MarkdownRenderer } from "./markdown.ts";
 type Options = {
   hostname: string;
   port: number;
+  open: boolean;
   plugins: string[];
   html: boolean;
   breaks: boolean;
@@ -53,6 +55,7 @@ export async function main(denops: Denops) {
     const [
       hostname,
       port,
+      open,
       plugins,
       html,
       breaks,
@@ -62,6 +65,7 @@ export async function main(denops: Denops) {
     ] = await batch.gather(denops, async (denops) => {
       await g.get(denops, "glance#server_hostname", "127.0.0.1");
       await g.get(denops, "glance#server_port", 8765);
+      await g.get(denops, "glance#server_open", true);
       await g.get(denops, "glance#markdown_plugins", []);
       await g.get(denops, "glance#markdown_html", false);
       await g.get(denops, "glance#markdown_breaks", false);
@@ -71,6 +75,7 @@ export async function main(denops: Denops) {
     }) as [
       string,
       number,
+      boolean,
       string[],
       boolean,
       boolean,
@@ -81,6 +86,7 @@ export async function main(denops: Denops) {
     options = {
       hostname,
       port,
+      open,
       plugins,
       html,
       breaks,
@@ -117,6 +123,9 @@ export async function main(denops: Denops) {
       options = await ensureOptions();
       server = await ensureServer();
       server.listen({ hostname: options.hostname, port: options.port });
+      if (options.open) {
+        await open(`http://localhost:${options.port}`);
+      }
     },
     close() {
       server?.close();
