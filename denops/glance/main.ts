@@ -139,4 +139,9 @@ export async function main(denops: Denops) {
       server?.close();
     },
   };
+
+  // To accelerate startup, call ensureXXXXX in background
+  ensureOptions().catch((e) => console.error("[glance] Failed to load options", e));
+  ensureRenderer().catch((e) => console.error("[glance] Failed to load renderer", e));
+  ensureServer().catch((e) => console.error("[glance] Failed to load server", e));
 }

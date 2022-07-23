@@ -29,7 +29,7 @@ export class Server {
     app.ws("/ws", (req) => {
       const socket: WebSocket = req as any;
       this.#sockets.push(socket);
-      setTimeout(options.onOpen, 1000);
+      queueMicrotask(options.onOpen);
     });
 
     app.get("/css", async (req) => {
