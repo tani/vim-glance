@@ -1,5 +1,4 @@
-import { App, createApp } from "https://lib.deno.dev/x/servest@v1/mod.ts";
-import { lookup } from "https://esm.sh/mime-types@2";
+import { Application, FlashServer, Router } from "https://lib.deno.dev/x/oak@v11/mod.ts";
 
 interface Options {
   onOpen: () => void;
@@ -9,65 +8,66 @@ interface Options {
 
 export class Server {
   #sockets: WebSocket[] = [];
-  #listener: Deno.Closer | undefined;
-  #app: App | undefined;
+  #controller = new AbortController();
+  #app: Application | undefined;
+
   constructor(options: Options) {
-    const app = createApp();
+    const router = new Router()
+      .get("/", async ({ response }) => {
+        response.redirect("/html");
+      })
+      .get("/html", async ({ response }) => {
+        const url = new URL("./index.html", import.meta.url);
+        response.status = 200;
+        response.headers.set("Content-Type", "text/html");
+        response.body = await Deno.readTextFile(url);
+      })
+      .get("/ws", (context) => {
+        if (!context.isUpgradable) {
+          context.throw(501);
+        }
+        const socket = context.upgrade();
+        this.#sockets.push(socket);
+        queueMicrotask(options.onOpen);
+      })
+      .get("/css", async ({ response }) => {
+        response.status = 200;
+        response.headers.set("Content-Type", "text/css");
+        response.body = options.stylesheet;
+      })
+      .get("/js", async ({ response }) => {
+        response.status = 200;
+        response.headers.set("Content-Type", "text/javascript");
+        const url = new URL("./script.js", import.meta.url);
+        response.body = await Deno.readTextFile(url);
+      })
+      .get("/:file", async ({ request, response, params }) => {
+        const contentType = request.headers.get("Content-Type") ?? "text/plain";
+        response.headers.set("Content-Type", contentType);
+        response.body = await options.readFile(params.file);
+        response.status = response.body === null ? 404 : 200;
+      });
 
-    app.get("/", async (req) => {
-      req.redirect("/html");
-    });
-
-    app.get("/html", async (req) => {
-      const status = 200;
-      const headers = new Headers({ "Content-Type": "text/html" });
-      const url = new URL("./index.html", import.meta.url);
-      const body = await Deno.readTextFile(url);
-      await req.respond({ status, headers, body });
-    });
-
-    app.ws("/ws", (req) => {
-      const socket: WebSocket = req as any;
-      this.#sockets.push(socket);
-      queueMicrotask(options.onOpen);
-    });
-
-    app.get("/css", async (req) => {
-      const status = 200;
-      const headers = new Headers({ "Content-Type": "text/css" });
-      const body = options.stylesheet;
-      await req.respond({ status, headers, body });
-    });
-
-    app.get("/js", async (req) => {
-      const status = 200;
-      const headers = new Headers({ "Content-Type": "text/javascript" });
-      const url = new URL("./script.js", import.meta.url);
-      const body = await Deno.readTextFile(url);
-      await req.respond({ status, headers, body });
-    });
-
-    app.get(/^\/(.+)/, async (req) => {
-      const contentType = lookup(req.match[1]) || "text/plain";
-      const headers = new Headers({ "Content-Type": contentType });
-      const body = await options.readFile(req.match[1]);
-      const status = body === null ? 404 : 200;
-      await req.respond({ status, headers, body });
-    });
+    const app = new Application({ serverConstructor: FlashServer });
+    app.use(router.routes());
+    app.use(router.allowedMethods());
 
     this.#app = app;
   }
   close() {
-    this.#listener?.close();
+    this.#controller.abort();
   }
   listen(options: Deno.ListenOptions) {
-    if (!this.#listener) {
-      this.#listener = this.#app?.listen(options);
-    }
+    this.#app?.listen({ ...options, signal: this.#controller.signal });
   }
   send(type: string, payload: unknown) {
     for (const socket of this.#sockets) {
-      socket.send(JSON.stringify({ type, payload }));
+      try {
+        socket.send(JSON.stringify({ type, payload }));
+      } catch {
+        console.log("[glance] A socket has been closed");
+        this.#sockets = this.#sockets.filter((it) => it !== socket);
+      }
     }
   }
 }
