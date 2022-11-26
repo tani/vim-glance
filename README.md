@@ -11,7 +11,7 @@ renderer using markdown-it plugins.
 If you want to use emoji in the markdown, then you just need to append `markdown-it-emoji` to `g:glance#plugins`
 
 ```vim
-let g:glance#plugins = ['https://esm.sh/markdown-it-emoji']
+let g:glance#markdown_plugins = ['https://esm.sh/markdown-it-emoji']
 ```
 
 The renderer dynamically loads your plugin with _dynamic import_ in Deno, then it renders the buffer content with
