@@ -1,4 +1,5 @@
-import MarkdownIt from "npm:markdown-it@13.0.1";
+import MarkdownIt from "https://esm.sh/markdown-it@13.0.1";
+import { Renderer, RendererConstructor } from "./renderer.ts";
 
 interface Options {
   html: boolean;
@@ -8,25 +9,30 @@ interface Options {
   createMarkdownRenderer: (md: MarkdownIt) => MarkdownIt;
 }
 
-export class MarkdownRenderer {
-  #markdownIt: MarkdownIt | undefined;
-  async initialize(options: Options) {
-    let markdownIt = new MarkdownIt({
-      options,
-    });
-    const plugins = [
-      ...options.plugins,
-      "https://esm.sh/markdown-it-source-map",
-    ];
-    const modules = await Promise.all(
-      plugins.map(async (plugin) => await import(plugin)),
-    );
-    for (const module of modules) {
-      markdownIt = markdownIt.use(module.default);
+export const MarkdownRenderer: RendererConstructor<Options> =
+  class MarkdownRenderer implements Renderer<Options> {
+    #markdownIt: MarkdownIt;
+    constructor(markdownIt: MarkdownIt) {
+      this.#markdownIt = markdownIt;
     }
-    this.#markdownIt = options.createMarkdownRenderer(markdownIt);
+    static async create(options: Options): Promise<MarkdownRenderer> {
+      let markdownIt = new MarkdownIt({
+        options,
+      });
+      const plugins = [
+        ...options.plugins,
+        "https://esm.sh/markdown-it-source-map",
+      ];
+      const modules = await Promise.all(
+        plugins.map(async (plugin) => await import(plugin)),
+      );
+      for (const module of modules) {
+        markdownIt = markdownIt.use(module.default);
+      }
+      markdownIt = options.createMarkdownRenderer(markdownIt);
+      return new MarkdownRenderer(markdownIt)
+    }
+    render(text: string): Promise<string> {
+      return Promise.resolve(this.#markdownIt.render(text));
+    }
   }
-  render(content: string) {
-    return Promise.resolve(this.#markdownIt.render(content));
-  }
-}
