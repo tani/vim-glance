@@ -1,6 +1,9 @@
 # Glance Vim
 
 ![](https://user-images.githubusercontent.com/5019902/152632510-6c2081f1-213f-4123-9739-bd1fd6e2c765.png)
+**NEW**: glance-vim now supports asciidoc.
+You can preview asciidoc files.
+To preview it, you just need to type `:Glance` in a buffer with the filetype `asciidoc`.
 
 Do you know the number of Markdown flavours in the world? Everyone has an own flavour. It's hard to find the suitable
 Markdown previewer for your own flavored Markdown.
@@ -37,8 +40,8 @@ Plug 'tani/glance-vim'
 
 ## Usage
 
-Please hit the command `:Glance` in Vim and open `http://localhost:8765` in the browser.
-Use `:GlanceStop` to stop glance.
+Please hit the command `:Glance` in Vim and open `http://localhost:8765` in the browser. Use `:GlanceStop` to stop
+glance.
 
 - `g:glance#server_hostname (127.0.0.1)` is a hostname to serve the previewer.
 - `g:glance#server_port (8765)` is a port number to serve the previewer.
