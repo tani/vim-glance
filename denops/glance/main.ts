@@ -10,6 +10,10 @@ import { MarkdownRenderer } from "./markdown.ts";
 import { AsciidocRenderer } from "./asciidoc.ts";
 import { Renderer } from "./renderer.ts";
 
+interface Renderers {
+  [key: string]: Renderer<any>;
+}
+
 type Options = {
   hostname: string;
   port: number;
@@ -100,7 +104,7 @@ export async function main(denops: Denops) {
     };
   });
 
-  const ensureRenderers = memoizy(async () => {
+  const ensureRenderers = memoizy(async (): Promise<Renderers> => {
     const options = await ensureOptions();
     const { createMarkdownRenderer } = await import(options.configPath);
     const markdown = await MarkdownRenderer.create({
@@ -149,7 +153,7 @@ export async function main(denops: Denops) {
   };
 
   // To accelerate startup, call ensureXXXXX in background
-  ensureOptions().catch((e) => console.error("[glance] Failed to load options", e));
-  ensureRenderers().catch((e) => console.error("[glance] Failed to load renderer", e));
-  ensureServer().catch((e) => console.error("[glance] Failed to load server", e));
+  // ensureOptions().catch((e) => console.error("[glance] Failed to load options", e));
+  // ensureRenderers().catch((e) => console.error("[glance] Failed to load renderer", e));
+  // ensureServer().catch((e) => console.error("[glance] Failed to load server", e));
 }

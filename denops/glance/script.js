@@ -1,12 +1,14 @@
+import morphdom from "https://unpkg.com/morphdom/dist/morphdom-esm.js";
 const ws = new WebSocket(`ws://${location.host}/ws`);
+let html = "";
 
 async function update(payload) {
+  //console.log(payload);
   const doc = document.getElementById("viewer").contentWindow.document;
   // update html
   const root = doc.getElementById("root");
-  console.log(root, payload);
-  if (root && root.innerHTML !== payload.document) {
-    root.innerHTML = payload.document;
+  if (root) {
+    morphdom(root, `<div id="root">${payload.document}</div>`);
   }
   // update curosr position
   let line = payload.line;
