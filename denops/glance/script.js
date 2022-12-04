@@ -10,10 +10,10 @@ async function update(payload) {
   }
   // update curosr position
   let line = payload.line;
-  let element = doc.querySelector(`[data-source-line="${line}"]`);
+  let element = doc.querySelector(`[data-source-line="${line}"],[id="data-source-line-${line}"]`);
   while (line > 1 && !element) {
     line--;
-    element = doc.querySelector(`[data-source-line="${line}"]`);
+    element = doc.querySelector(`[data-source-line="${line}"],[id="data-source-line-${line}"]`);
   }
   element?.scrollIntoView();
 }
