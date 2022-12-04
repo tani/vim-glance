@@ -1,15 +1,14 @@
 # Glance Vim
 
 ![](https://user-images.githubusercontent.com/5019902/152632510-6c2081f1-213f-4123-9739-bd1fd6e2c765.png)
+
 **NEW**: glance-vim now supports asciidoc.
 You can preview asciidoc files.
 To preview it, you just need to type `:Glance` in a buffer with the filetype `asciidoc`.
 
-Do you know the number of Markdown flavours in the world? Everyone has an own flavour. It's hard to find the suitable
-Markdown previewer for your own flavored Markdown.
+Do you know the number of Markdown flavours in the world? Everyone has an own flavour. It's hard to find the suitable Markdown previewer for your own flavored Markdown.
 
-Glance Vim is YOUR previewer. You do not to wander anymore. Because this plugin provides a mechanism to customize
-renderer using markdown-it plugins.
+Glance Vim is YOUR previewer because this plugin provides a mechanism to customize renderer using markdown-it plugins.
 
 If you want to use emoji in the markdown, then you just need to append `markdown-it-emoji` to `g:glance#plugins`
 
