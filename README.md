@@ -1,4 +1,4 @@
-# Glance Vim
+# vim-glance
 
 ![](https://user-images.githubusercontent.com/5019902/152632510-6c2081f1-213f-4123-9739-bd1fd6e2c765.png)
 
