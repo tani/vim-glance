@@ -1,4 +1,5 @@
-import { Application, FlashServer, Router } from "https://lib.deno.dev/x/oak@v11/mod.ts";
+import { Hono } from "https://lib.deno.dev/x/hono@v3/mod.ts";
+import { serve } from 'https://deno.land/std@0.191.0/http/server.ts'
 
 interface Options {
   onOpen: () => void;
@@ -9,48 +10,57 @@ interface Options {
 export class Server {
   #sockets: WebSocket[] = [];
   #controller = new AbortController();
-  #app: Application | undefined;
+  #app: Hono | undefined = undefined;
 
   constructor(options: Options) {
-    const router = new Router()
-      .get("/", async ({ response }) => {
-        response.redirect("/html");
-      })
-      .get("/html", async ({ response }) => {
+    const app = new Hono()
+    app.get("/", (c) => {
+      return c.redirect("/html");
+    })
+    app.get("/html", (c) => {
+      try {
         const url = new URL("./index.html", import.meta.url);
-        response.status = 200;
-        response.headers.set("Content-Type", "text/html");
-        response.body = await Deno.readTextFile(url);
-      })
-      .get("/ws", (context) => {
-        if (!context.isUpgradable) {
-          context.throw(501);
-        }
-        const socket = context.upgrade();
-        this.#sockets.push(socket);
-        queueMicrotask(options.onOpen);
-      })
-      .get("/css", async ({ response }) => {
-        response.status = 200;
-        response.headers.set("Content-Type", "text/css");
-        response.body = options.stylesheet;
-      })
-      .get("/js", async ({ response }) => {
-        response.status = 200;
-        response.headers.set("Content-Type", "text/javascript");
+        const body = Deno.readTextFileSync(url);
+        c.status(200);
+        return c.html(body);
+      } catch {
+        c.status(404);
+        return c.text("File not found");
+      }
+    })
+    app.get("/ws", (c) => {
+      const { response, socket } = Deno.upgradeWebSocket(c.req.raw);
+      this.#sockets.push(socket);
+      return response
+    })
+    app.get("/css", (c) => {
+      c.header("Content-Type", "text/css");
+      return c.body(options.stylesheet);
+    })
+    app.get("/js", async (c) => {
+      try {
         const url = new URL("./script.js", import.meta.url);
-        response.body = await Deno.readTextFile(url);
-      })
-      .get("/:file", async ({ request, response, params }) => {
-        const contentType = request.headers.get("Content-Type") ?? "text/plain";
-        response.headers.set("Content-Type", contentType);
-        response.body = await options.readFile(params.file);
-        response.status = response.body === null ? 404 : 200;
-      });
-
-    const app = new Application({ serverConstructor: FlashServer });
-    app.use(router.routes());
-    app.use(router.allowedMethods());
+        const body = await Deno.readTextFile(url);
+        c.header("Content-Type", "text/javascript");
+        c.status(200);
+        return c.body(body);
+      } catch {
+        c.status(404);
+        return c.text("File not found");
+      }
+    })
+    app.get("/:file", async (c) => {
+        try {
+          const body = await Deno.readFile(c.req.param("file"))
+          const contentType = c.req.headers.get("Content-Type") ?? "text/plain";
+          c.header("Content-Type", contentType);
+          c.status(200);
+          return c.body(body);
+        } catch {
+          c.status(404);
+          return c.text("File not found");
+        }
+    });
 
     this.#app = app;
   }
@@ -58,7 +68,10 @@ export class Server {
     this.#controller.abort();
   }
   listen(options: Deno.ListenOptions) {
-    this.#app?.listen({ ...options, signal: this.#controller.signal });
+    serve(this.#app?.fetch!, {
+      ...options,
+      signal: this.#controller.signal,
+    });
   }
   send(type: string, payload: unknown) {
     for (const socket of this.#sockets) {

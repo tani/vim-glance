@@ -2,39 +2,36 @@
 
 ![](https://user-images.githubusercontent.com/5019902/152632510-6c2081f1-213f-4123-9739-bd1fd6e2c765.png)
 
-**NEW**: glance-vim now supports asciidoc.
-You can preview asciidoc files.
-To preview it, you just need to type `:Glance` in a buffer with the filetype `asciidoc`.
+**UPDATE:** The glance-vim now supports Asciidoc and POD file types. You can preview these file types within the vim editor by typing `:Glance` in a buffer that houses these specific file types.
 
-Do you know the number of Markdown flavours in the world? Everyone has an own flavour. It's hard to find the suitable Markdown previewer for your own flavored Markdown.
-
-Glance Vim is YOUR previewer because this plugin provides a mechanism to customize renderer using markdown-it plugins.
-
-If you want to use emoji in the markdown, then you just need to append `markdown-it-emoji` to `g:glance#plugins`
+The plugin offers a customization mechanism for rendering documents using markdown-it plugins.
+If you desire to use emojis within your markdown, you can simply append `markdown-it-emoji` plugin URL to the `g:glance#plugins` as shown below:
 
 ```vim
 let g:glance#markdown_plugins = ['https://esm.sh/markdown-it-emoji']
 ```
 
-The renderer dynamically loads your plugin with _dynamic import_ in Deno, then it renders the buffer content with
-_markdown-it_, and finally it sends the HTML document to the browwser.
+The above plugin is loaded dynamically within Deno, consequently rendering the buffer content with _markdown-it_. The rendered content is subsequently dispatched as an HTML document to your browser.
 
-Of couse, Glance Vim also provide features as follows.
+Glance Vim offers various handy features:
 
-- Spy the cursor motion in Vim.
-- Append custom preamble in a head of HTML output.
-- Synchronize content between the buffer and the browser.
-- Offline mode, Deno caches the markdown-it plugins.
+- Monitoring cursor movement within Vim.
+- Adding a custom preamble to the beginning of your HTML output.
+- Facilitating content synchronization between the buffer and the browser.
+- Operating in offline mode where Deno caches the markdown-it plugins.
 
-Let's write document in your own flavoured Markdown.
+Begin crafting your documents with your own flavored markdown.
 
 ## Installation
 
 This plugin requires denops.vim and Deno.
+For example, to use this plugin with [vim-jetpack](https://github.com/tani/vim-jetpack).
+Optionally, to use POD renderer, you need to install [podium](https://github.com/tani/podium) as well.
 
 ```vim
-Plug 'vim-denops/denops.vim'
-Plug 'tani/glance-vim'
+Jetpack 'vim-denops/denops.vim'
+Jetpack 'tani/glance-vim'
+Jetpack 'tani/podium'           "For POD file, optional
 ```
 
 ## Usage
@@ -81,5 +78,5 @@ export function createMarkdownRenderer(md: MarkdownIt): MarkdownIt {
 
 ## Copyright and License
 
-Copyrihgt (c) 2022 TANIGUCHI Masaya. All rights reserved. This plugin is released under
+Copyrihgt (c) 2023 TANIGUCHI Masaya. All rights reserved. This plugin is released under
 [MIT License](http://git.io/mit-license)
