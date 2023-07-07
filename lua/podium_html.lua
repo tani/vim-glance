@@ -204,4 +204,6 @@ local html = P.PodiumBackend.new({
   end,
 })
 
-return P.PodiumProcessor.new(html)
+return function(input)
+  return P.process(html, input)
+end

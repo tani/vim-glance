@@ -15,6 +15,6 @@ export const PodiumRenderer: RendererConstructor<Options> =
       return Promise.resolve(new PodiumRenderer(opts));
     }
     render(text: string): Promise<string> {
-      return this.#denops.call('luaeval', `require("podium_html"):process([====[${text}]====])`) as Promise<string>;
+      return this.#denops.call('luaeval', `require("podium_html")([====[${text}]====])`) as Promise<string>;
     }
   }
