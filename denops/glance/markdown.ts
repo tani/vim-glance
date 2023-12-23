@@ -28,9 +28,9 @@ export const MarkdownRenderer: RendererConstructor<Options> =
         markdownIt = markdownIt.use(module.default);
       }
       markdownIt = options.createMarkdownRenderer(markdownIt);
-      return new MarkdownRenderer(markdownIt)
+      return new MarkdownRenderer(markdownIt);
     }
     render(text: string): Promise<string> {
       return Promise.resolve(this.#markdownIt.render(text));
     }
-  }
+  };

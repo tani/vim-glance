@@ -16,7 +16,7 @@ function SourceMap(registry: any) {
   });
 }
 
-export const AsciidocRenderer: RendererConstructor<Options> = 
+export const AsciidocRenderer: RendererConstructor<Options> =
   class AsciidocRenderer implements Renderer<Options> {
     #asciidoctor: Asciidoctor;
     #options: Options;
@@ -25,12 +25,12 @@ export const AsciidocRenderer: RendererConstructor<Options> =
       this.#options = options;
     }
     static create(options: Options): Promise<AsciidocRenderer> {
-      const asciidoctor = createAsciidoctor()
+      const asciidoctor = createAsciidoctor();
       asciidoctor.Extensions.register(SourceMap);
       const renderer = new AsciidocRenderer(asciidoctor, {
         ...options,
         safe: "safe",
-        sourcemap: true
+        sourcemap: true,
       });
       return Promise.resolve(renderer);
     }
@@ -38,4 +38,4 @@ export const AsciidocRenderer: RendererConstructor<Options> =
       const doc = this.#asciidoctor.load(text, this.#options);
       return Promise.resolve(doc.convert());
     }
-  }
+  };

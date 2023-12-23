@@ -1,5 +1,5 @@
 import { Hono } from "https://lib.deno.dev/x/hono@v3/mod.ts";
-import { serve } from "https://deno.land/std@0.202.0/http/server.ts"
+import { serve } from "https://deno.land/std@0.202.0/http/server.ts";
 
 interface Options {
   onOpen: () => void;
@@ -13,10 +13,10 @@ export class Server {
   #app: Hono | undefined = undefined;
 
   constructor(options: Options) {
-    const app = new Hono()
+    const app = new Hono();
     app.get("/", (c) => {
       return c.redirect("/html");
-    })
+    });
     app.get("/html", (c) => {
       try {
         const url = new URL("./index.html", import.meta.url);
@@ -27,16 +27,16 @@ export class Server {
         c.status(404);
         return c.text("File not found");
       }
-    })
+    });
     app.get("/ws", (c) => {
       const { response, socket } = Deno.upgradeWebSocket(c.req.raw);
       this.#sockets.push(socket);
-      return response
-    })
+      return response;
+    });
     app.get("/css", (c) => {
       c.header("Content-Type", "text/css");
       return c.body(options.stylesheet);
-    })
+    });
     app.get("/js", async (c) => {
       try {
         const url = new URL("./script.js", import.meta.url);
@@ -48,18 +48,18 @@ export class Server {
         c.status(404);
         return c.text("File not found");
       }
-    })
+    });
     app.get("/:file", async (c) => {
-        try {
-          const body = await Deno.readFile(c.req.param("file"))
-          const contentType = c.req.headers.get("Content-Type") ?? "text/plain";
-          c.header("Content-Type", contentType);
-          c.status(200);
-          return c.body(body);
-        } catch {
-          c.status(404);
-          return c.text("File not found");
-        }
+      try {
+        const body = await Deno.readFile(c.req.param("file"));
+        const contentType = c.req.headers.get("Content-Type") ?? "text/plain";
+        c.header("Content-Type", contentType);
+        c.status(200);
+        return c.body(body);
+      } catch {
+        c.status(404);
+        return c.text("File not found");
+      }
     });
 
     this.#app = app;
