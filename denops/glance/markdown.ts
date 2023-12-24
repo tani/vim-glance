@@ -16,9 +16,7 @@ export const MarkdownRenderer: RendererConstructor<Options> =
       this.#markdownIt = markdownIt;
     }
     static async create(options: Options): Promise<MarkdownRenderer> {
-      let markdownIt = new MarkdownIt({
-        options,
-      });
+      let markdownIt = new MarkdownIt(options);
       const plugins = [
         ...options.plugins,
         "https://esm.sh/markdown-it-source-map",
@@ -30,9 +28,9 @@ export const MarkdownRenderer: RendererConstructor<Options> =
         markdownIt = markdownIt.use(module.default);
       }
       markdownIt = options.createMarkdownRenderer(markdownIt);
-      return new MarkdownRenderer(markdownIt)
+      return new MarkdownRenderer(markdownIt);
     }
     render(text: string): Promise<string> {
       return Promise.resolve(this.#markdownIt.render(text));
     }
-  }
+  };

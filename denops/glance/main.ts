@@ -48,7 +48,7 @@ export async function main(denops: Denops) {
       fn.getpos(denops, "."),
     ]) as [string[], fn.Position];
     const content = lines.join("\n");
-    const filetype = await o.get(denops, "filetype", "none")
+    const filetype = await o.get(denops, "filetype", "none");
     if (filetype == "markdown") {
       const document = await renderer.markdown.render(content);
       server.send("update", { document, line: pos[1] });
@@ -86,7 +86,8 @@ export async function main(denops: Denops) {
       width: min(700px, 90%);
     }
     `;
-    const defaultConfigPath = new URL("./config.ts", import.meta.url).toString();
+    const defaultConfigPath = new URL("./config.ts", import.meta.url)
+      .toString();
     const [
       hostname,
       port,
@@ -107,7 +108,7 @@ export async function main(denops: Denops) {
       g.get(denops, "glance#markdown_linkify", false),
       g.get(denops, "glance#stylesheet", defaultStylesheet),
       g.get(denops, "glance#config", defaultConfigPath),
-    ])
+    ]);
     return {
       hostname,
       port,
@@ -141,7 +142,7 @@ export async function main(denops: Denops) {
     const server = new Server({
       onOpen: update,
       readFile,
-      stylesheet: options.stylesheet
+      stylesheet: options.stylesheet,
     });
     return server;
   });
@@ -156,7 +157,7 @@ export async function main(denops: Denops) {
       const server = await ensureServer();
       server.listen({
         hostname: options.hostname,
-        port: options.port
+        port: options.port,
       });
       if (options.open) {
         await open(`http://localhost:${options.port}`, {

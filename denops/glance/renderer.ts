@@ -6,4 +6,3 @@ export interface RendererConstructor<Options> {
   create: (options: Options) => Promise<Renderer<Options>>;
   new (...args: any[]): Renderer<Options>;
 }
-
