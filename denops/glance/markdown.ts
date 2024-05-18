@@ -1,4 +1,4 @@
-import MarkdownIt from "https://esm.sh/markdown-it@13.0.1";
+import MarkdownIt from "https://esm.sh/markdown-it@14.1.0";
 import { Renderer, RendererConstructor } from "./renderer.ts";
 
 interface Options {

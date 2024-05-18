@@ -1,10 +1,10 @@
-import { Denops } from "https://lib.deno.dev/x/denops_std@v5/mod.ts";
-import { g, o } from "https://lib.deno.dev/x/denops_std@v5/variable/mod.ts";
-import * as fn from "https://lib.deno.dev/x/denops_std@v5/function/mod.ts";
-import { collect } from "https://lib.deno.dev/x/denops_std@v5/batch/mod.ts";
-import { open } from "https://lib.deno.dev/x/open@v0.0.6/index.ts";
-import memoizy from "https://lib.deno.dev/x/memoizy@v1/mod.ts";
-import { join } from "https://lib.deno.dev/std/path/mod.ts";
+import { Denops } from "https://deno.land/x/denops_std@v6.5.0/mod.ts";
+import { g, o } from "https://deno.land/x/denops_std@v6.5.0/variable/mod.ts";
+import * as fn from "https://deno.land/x/denops_std@v6.5.0/function/mod.ts";
+import { collect } from "https://deno.land/x/denops_std@v6.5.0/batch/mod.ts";
+import { open } from "https://deno.land/x/open@v0.0.6/index.ts";
+import memoizy from "https://deno.land/x/memoizy@1.0.0/mod.ts";
+import { join } from "https://deno.land/std@0.224.0/path/mod.ts";
 import { Server } from "./server.ts";
 import { MarkdownRenderer } from "./markdown.ts";
 import { AsciidocRenderer } from "./asciidoc.ts";

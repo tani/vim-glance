@@ -1,5 +1,5 @@
-import { Hono } from "https://lib.deno.dev/x/hono@v3/mod.ts";
-import { serve } from "https://deno.land/std@0.202.0/http/server.ts";
+import { Hono } from "https://deno.land/x/hono@v4.3.7/mod.ts";
+import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 
 interface Options {
   onOpen: () => void;
