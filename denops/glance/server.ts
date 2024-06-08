@@ -1,5 +1,4 @@
 import { Hono } from "jsr:@hono/hono@4.4.4";
-import { serve } from "jsr:@std/http@0.224.0";
 
 interface Options {
   onOpen: () => void;
@@ -52,7 +51,7 @@ export class Server {
     app.get("/:file", async (c) => {
       try {
         const body = await Deno.readFile(c.req.param("file"));
-        const contentType = c.req.headers.get("Content-Type") ?? "text/plain";
+        const contentType = c.req.header("Content-Type") ?? "text/plain";
         c.header("Content-Type", contentType);
         c.status(200);
         return c.body(body);
@@ -68,10 +67,7 @@ export class Server {
     this.#controller.abort();
   }
   listen(options: Deno.ListenOptions) {
-    serve(this.#app?.fetch!, {
-      ...options,
-      signal: this.#controller.signal,
-    });
+    Deno.serve({ ...options, signal: this.#controller.signal }, this.#app?.fetch!);
   }
   send(type: string, payload: unknown) {
     for (const socket of this.#sockets) {
