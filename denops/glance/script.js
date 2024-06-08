@@ -1,4 +1,4 @@
-import morphdom from "https://unpkg.com/morphdom/dist/morphdom-esm.js";
+import morphdom from "https://esm.sh/morphdom@v2.7.2";
 const ws = new WebSocket(`ws://${location.host}/ws`);
 
 async function update(payload) {

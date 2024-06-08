@@ -1,5 +1,5 @@
-import createAsciidoctor from "https://esm.sh/asciidoctor@3.0.4";
-import type { Asciidoctor, ProcessorOptions } from "https://esm.sh/asciidoctor@3.0.4";
+import createAsciidoctor from "npm:@asciidoctor/core@3.0.4";
+import type { Asciidoctor, ProcessorOptions } from "npm:@asciidoctor/core@3.0.4";
 import { Renderer, RendererConstructor } from "./renderer.ts";
 
 type Options = ProcessorOptions;
