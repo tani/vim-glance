@@ -1,4 +1,4 @@
-import { Hono } from "https://deno.land/x/hono@v4.3.7/mod.ts";
+import { Hono } from "https://deno.land/x/hono@v4.3.11/mod.ts";
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 
 interface Options {
