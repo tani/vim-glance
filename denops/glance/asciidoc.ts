@@ -1,40 +1,39 @@
-import createAsciidoctor from "npm:@asciidoctor/core@3.0.4";
-import type { Asciidoctor, ProcessorOptions } from "npm:@asciidoctor/core@3.0.4";
 import { Renderer, RendererConstructor } from "./renderer.ts";
+import * as Asciidoctor from "npm:asciidoctor-wasm@0.2023.15/dist/browser.js"
 
-type Options = ProcessorOptions;
-
-function SourceMap(registry: any) {
-  registry.treeProcessor(function () {
-    this.process(function (doc: any) {
-      doc.findBy().forEach(function (block: any) {
-        block.id = `data-source-line-${block.getLineNumber()}`;
-      });
-      return doc;
-    });
-  });
-}
+type Options = Record<string | number | symbol, never>;
 
 export const AsciidocRenderer: RendererConstructor<Options> =
   class AsciidocRenderer implements Renderer<Options> {
-    #asciidoctor: Asciidoctor;
-    #options: Options;
-    constructor(asciidoctor: Asciidoctor, options: Options = {}) {
+    #asciidoctor: Asciidoctor.Asciidoctor;
+    constructor(asciidoctor: Asciidoctor.Asciidoctor) {
       this.#asciidoctor = asciidoctor;
-      this.#options = options;
     }
-    static create(options: Options): Promise<AsciidocRenderer> {
-      const asciidoctor = createAsciidoctor();
-      asciidoctor.Extensions.register(SourceMap as any);
-      const renderer = new AsciidocRenderer(asciidoctor, {
-        ...options,
-        safe: "safe",
-        sourcemap: true,
-      });
-      return Promise.resolve(renderer);
+    static async create(_options: Options): Promise<AsciidocRenderer> {
+      const adoc = await Asciidoctor.initFromURL(Asciidoctor.wasmURL);
+      return new AsciidocRenderer(adoc);
     }
-    render(text: string): Promise<string> {
-      const doc = this.#asciidoctor.load(text, this.#options);
-      return Promise.resolve(doc.convert());
+    async render(text: string): Promise<string> {
+      const convert_rb = await this.#asciidoctor.vm.evalAsync(`
+        require 'asciidoctor'
+        require 'asciidoctor/extensions'
+        require 'json'
+        class SourceMapProcessor < Asciidoctor::Extensions::TreeProcessor
+          def process(document)
+            document.find_by.each do |block|
+              block.id = "data-source-line-#{block.lineno}"
+            end
+            document
+          end
+        end
+        Asciidoctor::Extensions.register do
+          tree_processor SourceMapProcessor
+        end
+        lambda do |content|
+          Asciidoctor.convert(content.to_s, safe: :safe, sourcemap: true)
+        end
+      `)
+      const result = await convert_rb.callAsync("call", this.#asciidoctor.vm.wrap(text));
+      return result.toString();
     }
   };
