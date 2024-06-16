@@ -1,22 +1,21 @@
 import { Renderer, RendererConstructor } from "./renderer.ts";
-import * as Asciidoctor from "npm:asciidoctor-wasm@0.2023.15/dist/browser.js"
+import { Asciidoctor, wasmURL } from "npm:asciidoctor-wasm@0.2023.19/dist/browser.js"
+import type { AsciidoctorOptions } from "npm:asciidoctor-wasm@0.2023.19/dist/browser.js"
 
-type Options = Record<string | number | symbol, never>;
-
-export const AsciidocRenderer: RendererConstructor<Options> =
-  class AsciidocRenderer implements Renderer<Options> {
-    #asciidoctor: Asciidoctor.Asciidoctor;
-    constructor(asciidoctor: Asciidoctor.Asciidoctor) {
+export const AsciidocRenderer: RendererConstructor<AsciidoctorOptions> =
+  class AsciidocRenderer implements Renderer<AsciidoctorOptions> {
+    #asciidoctor: Asciidoctor;
+    #options: AsciidoctorOptions;
+    constructor(asciidoctor: Asciidoctor, options: AsciidoctorOptions = {}) {
       this.#asciidoctor = asciidoctor;
-    }
-    static async create(_options: Options): Promise<AsciidocRenderer> {
-      const adoc = await Asciidoctor.initFromURL(Asciidoctor.wasmURL);
-      return new AsciidocRenderer(adoc);
-    }
-    async render(text: string): Promise<string> {
-      const convert_rb = await this.#asciidoctor.vm.evalAsync(`
+      this.#options = { ...options, safe: "safe", sourcemap: true };
+ }
+    static async create(options: AsciidoctorOptions): Promise<AsciidocRenderer> {
+      const adoc = await Asciidoctor.initFromURL(wasmURL);
+      adoc.code = `
         require 'asciidoctor'
         require 'asciidoctor/extensions'
+        require 'js'
         require 'json'
         class SourceMapProcessor < Asciidoctor::Extensions::TreeProcessor
           def process(document)
@@ -29,11 +28,19 @@ export const AsciidocRenderer: RendererConstructor<Options> =
         Asciidoctor::Extensions.register do
           tree_processor SourceMapProcessor
         end
-        lambda do |content|
-          Asciidoctor.convert(content.to_s, safe: :safe, sourcemap: true)
+        lambda do |js_content, js_options|
+          options = {}
+          js_options_str = JS.global[:JSON].stringify(js_options).to_s
+          for key, value in JSON.parse(js_options_str)
+            options[key.to_sym] = value
+          end
+          content = js_content.to_s
+          Asciidoctor.convert(content, options)
         end
-      `)
-      const result = await convert_rb.callAsync("call", this.#asciidoctor.vm.wrap(text));
-      return result.toString();
+      `;
+      return new AsciidocRenderer(adoc, options);
+    }
+    render(text: string): Promise<string> {
+      return this.#asciidoctor.convert(text, this.#options);
     }
   };
