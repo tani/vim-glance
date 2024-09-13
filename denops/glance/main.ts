@@ -1,10 +1,10 @@
-import { Denops } from "https://deno.land/x/denops_std@v6.5.0/mod.ts";
-import { g, o } from "https://deno.land/x/denops_std@v6.5.0/variable/mod.ts";
-import * as fn from "https://deno.land/x/denops_std@v6.5.0/function/mod.ts";
-import { collect } from "https://deno.land/x/denops_std@v6.5.0/batch/mod.ts";
+import { Denops } from "https://deno.land/x/denops_std@v6.5.1/mod.ts";
+import { g, o } from "https://deno.land/x/denops_std@v6.5.1/variable/mod.ts";
+import * as fn from "https://deno.land/x/denops_std@v6.5.1/function/mod.ts";
+import { collect } from "https://deno.land/x/denops_std@v6.5.1/batch/mod.ts";
 import { open } from "https://deno.land/x/open@v0.0.6/index.ts";
-import memoizy from "npm:memoizy@1.0.0";
-import { join } from "jsr:@std/path@0.224.0";
+import memoizy from "npm:memoizy@1.2.3";
+import { join } from "jsr:@std/path@1.0.3";
 import { Server } from "./server.ts";
 import { MarkdownRenderer } from "./markdown.ts";
 import { AsciidocRenderer } from "./asciidoc.ts";
