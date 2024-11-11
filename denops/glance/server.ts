@@ -66,7 +66,7 @@ export class Server {
   close() {
     this.#controller.abort();
   }
-  listen(options: Deno.ListenOptions) {
+  listen(options: Deno.ServeTcpOptions) {
     Deno.serve({ ...options, signal: this.#controller.signal }, this.#app?.fetch!);
   }
   send(type: string, payload: unknown) {
