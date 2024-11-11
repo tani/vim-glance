@@ -42,6 +42,7 @@ glance.
 - `g:glance#server_hostname (127.0.0.1)` is a hostname to serve the previewer.
 - `g:glance#server_port (8765)` is a port number to serve the previewer.
 - `g:glance#server_open (v:true)` is a boolean value to open the previewer automatically
+- `g:glance#server_silent (v:false)` is a boolean value to notify or silent logs from the server
 - `g:glance#markdown_plugins ([])` is a list of URLs for the markdown-it plugins.
 - `g:glance#markdown_html (v:false)` is a boolean value to be enable HTML tags in markdown.
 - `g:glance#markdown_linkify (v:false)` is a boolean value to render URLs as `a` elments .

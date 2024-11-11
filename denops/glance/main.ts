@@ -93,6 +93,7 @@ export async function main(denops: Denops) {
       hostname,
       port,
       open,
+      silent,
       markdown_plugins,
       markdown_html,
       markdown_breaks,
@@ -103,6 +104,7 @@ export async function main(denops: Denops) {
       g.get(denops, "glance#server_hostname", "127.0.0.1"),
       g.get(denops, "glance#server_port", 8765),
       g.get(denops, "glance#server_open", true),
+      g.get(denops, "glance#server_silent", false),
       g.get(denops, "glance#markdown_plugins", []),
       g.get(denops, "glance#markdown_html", false),
       g.get(denops, "glance#markdown_breaks", false),
@@ -114,6 +116,7 @@ export async function main(denops: Denops) {
       hostname,
       port,
       open,
+      silent,
       markdown_plugins,
       markdown_html,
       markdown_breaks,
@@ -160,8 +163,10 @@ export async function main(denops: Denops) {
         hostname: options.hostname,
         port: options.port,
         onListen: (addr: Deno.NetAddr) => {
-          const message = `[glance] Server listening on http://${addr.hostname}:${addr.port}`;
-          helper.echo(denops, message);
+          if (!options.silent) {
+            const message = `[glance] Server listening on http://${addr.hostname}:${addr.port}`;
+            helper.echo(denops, message);
+          }
         },
       });
       if (options.open) {
