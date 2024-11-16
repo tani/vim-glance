@@ -1,4 +1,4 @@
-import { Hono } from "jsr:@hono/hono@4.6.3";
+import { Hono } from "jsr:@hono/hono@4.6.8";
 
 interface Options {
   onOpen: () => void;
