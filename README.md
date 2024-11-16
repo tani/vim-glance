@@ -46,7 +46,18 @@ glance.
 - `g:glance#markdown_html (v:false)` is a boolean value to be enable HTML tags in markdown.
 - `g:glance#markdown_linkify (v:false)` is a boolean value to render URLs as `a` elments .
 - `g:glance#markdown_breaks (v:false)` is a boolean value to convert newlines into `br` elements.
-- `g:glance#stylesheet ('')` is a string, which will be appended as a CSS stylesheet..
+- `g:glance#stylesheet ('')` is a string, which will be appended as a CSS stylesheet.
+    - NOTE: The type of a variable **with heredoc in a Vim script** will be **list of a string** (see also:`:h let-heredoc`). So you need use with them `join()` function, like bellow.
+
+```vim
+let s:stylesheet =<< trim END
+html, body, #viewer {
+  border: none;
+  font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif;
+}
+END
+let g:glance#stylesheet = join(s:stylesheet, "\n")
+```
 
 ## Advanced Usage
 
