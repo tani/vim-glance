@@ -5,7 +5,7 @@ import { collect } from "https://deno.land/x/denops_std@v6.5.1/batch/mod.ts";
 import * as helper from "https://deno.land/x/denops_std@v6.5.1/helper/mod.ts";
 import { open } from "https://deno.land/x/open@v1.0.0/index.ts";
 import { memoizy } from "npm:memoizy@1.2.3";
-import { join } from "jsr:@std/path@1.0.8";
+import { join } from "jsr:@std/path@1.1.2";
 import { Server } from "./server.ts";
 import { MarkdownRenderer } from "./markdown.ts";
 import { AsciidocRenderer } from "./asciidoc.ts";
