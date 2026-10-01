@@ -1,4 +1,4 @@
-import MarkdownIt from "npm:markdown-it@14.1.0";
+import MarkdownIt from "npm:markdown-it@15.0.2";
 import { Renderer, RendererConstructor } from "./renderer.ts";
 
 interface Options {
